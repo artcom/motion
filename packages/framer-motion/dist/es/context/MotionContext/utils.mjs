@@ -2,7 +2,7 @@ import { checkIfControllingVariants, isVariantLabel } from '../../render/utils/v
 
 function getCurrentTreeVariants(props, context) {
     if (checkIfControllingVariants(props)) {
-        var initial = props.initial, animate = props.animate;
+        const { initial, animate } = props;
         return {
             initial: initial === false || isVariantLabel(initial)
                 ? initial

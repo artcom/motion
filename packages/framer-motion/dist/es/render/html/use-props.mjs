@@ -1,4 +1,3 @@
-import { __assign } from 'tslib';
 import { useMemo } from 'react';
 import { isForcedMotionValue } from '../../motion/utils/is-forced-motion-value.mjs';
 import { isMotionValue } from '../../value/utils/is-motion-value.mjs';
@@ -6,24 +5,23 @@ import { buildHTMLStyles } from './utils/build-styles.mjs';
 import { createHtmlRenderState } from './utils/create-render-state.mjs';
 
 function copyRawValuesOnly(target, source, props) {
-    for (var key in source) {
+    for (const key in source) {
         if (!isMotionValue(source[key]) && !isForcedMotionValue(key, props)) {
             target[key] = source[key];
         }
     }
 }
-function useInitialMotionValues(_a, visualState, isStatic) {
-    var transformTemplate = _a.transformTemplate;
-    return useMemo(function () {
-        var state = createHtmlRenderState();
+function useInitialMotionValues({ transformTemplate }, visualState, isStatic) {
+    return useMemo(() => {
+        const state = createHtmlRenderState();
         buildHTMLStyles(state, visualState, { enableHardwareAcceleration: !isStatic }, transformTemplate);
-        var vars = state.vars, style = state.style;
-        return __assign(__assign({}, vars), style);
+        const { vars, style } = state;
+        return Object.assign(Object.assign({}, vars), style);
     }, [visualState]);
 }
 function useStyle(props, visualState, isStatic) {
-    var styleProp = props.style || {};
-    var style = {};
+    const styleProp = props.style || {};
+    let style = {};
     /**
      * Copy non-Motion Values straight into style
      */
@@ -36,8 +34,8 @@ function useStyle(props, visualState, isStatic) {
 }
 function useHTMLProps(props, visualState, isStatic) {
     // The `any` isn't ideal but it is the type of createElement props argument
-    var htmlProps = {};
-    var style = useStyle(props, visualState, isStatic);
+    const htmlProps = {};
+    const style = useStyle(props, visualState, isStatic);
     if (Boolean(props.drag) && props.dragListener !== false) {
         // Disable the ghost element when a user drags
         htmlProps.draggable = false;
@@ -50,7 +48,7 @@ function useHTMLProps(props, visualState, isStatic) {
         style.touchAction =
             props.drag === true
                 ? "none"
-                : "pan-".concat(props.drag === "x" ? "y" : "x");
+                : `pan-${props.drag === "x" ? "y" : "x"}`;
     }
     htmlProps.style = style;
     return htmlProps;

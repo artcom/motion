@@ -6,7 +6,7 @@ import { isRefObject } from '../../utils/is-ref-object.mjs';
  * external ref and VisualElement.
  */
 function useMotionRef(visualState, visualElement, externalRef) {
-    return useCallback(function (instance) {
+    return useCallback((instance) => {
         var _a;
         instance && ((_a = visualState.mount) === null || _a === void 0 ? void 0 : _a.call(visualState, instance));
         if (visualElement) {

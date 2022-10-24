@@ -6,24 +6,24 @@ import { numberValueTypes } from '../../dom/value-types/number.mjs';
 
 function buildHTMLStyles(state, latestValues, options, transformTemplate) {
     var _a;
-    var style = state.style, vars = state.vars, transform = state.transform, transformKeys = state.transformKeys, transformOrigin = state.transformOrigin;
+    const { style, vars, transform, transformKeys, transformOrigin } = state;
     // Empty the transformKeys array. As we're throwing out refs to its items
     // this might not be as cheap as suspected. Maybe using the array as a buffer
     // with a manual incrementation would be better.
     transformKeys.length = 0;
     // Track whether we encounter any transform or transformOrigin values.
-    var hasTransform = false;
-    var hasTransformOrigin = false;
+    let hasTransform = false;
+    let hasTransformOrigin = false;
     // Does the calculated transform essentially equal "none"?
-    var transformIsNone = true;
+    let transformIsNone = true;
     /**
      * Loop over all our latest animated values and decide whether to handle them
      * as a style or CSS variable.
      *
      * Transforms and transform origins are kept seperately for further processing.
      */
-    for (var key in latestValues) {
-        var value = latestValues[key];
+    for (const key in latestValues) {
+        const value = latestValues[key];
         /**
          * If this is a CSS variable we don't do any further processing.
          */
@@ -32,8 +32,8 @@ function buildHTMLStyles(state, latestValues, options, transformTemplate) {
             continue;
         }
         // Convert the value to its default value type, ie 0 -> "0px"
-        var valueType = numberValueTypes[key];
-        var valueAsType = getValueAsType(value, valueType);
+        const valueType = numberValueTypes[key];
+        const valueAsType = getValueAsType(value, valueType);
         if (isTransformProp(key)) {
             // If this is a transform, flag to enable further transform processing
             hasTransform = true;

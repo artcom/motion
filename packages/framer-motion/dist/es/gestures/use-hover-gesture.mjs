@@ -4,7 +4,7 @@ import { usePointerEvent } from '../events/use-pointer-event.mjs';
 import { isDragActive } from './drag/utils/lock.mjs';
 
 function createHoverEvent(visualElement, isActive, callback) {
-    return function (event, info) {
+    return (event, info) => {
         var _a;
         if (!isMouseEvent(event) || isDragActive())
             return;
@@ -15,8 +15,7 @@ function createHoverEvent(visualElement, isActive, callback) {
         callback === null || callback === void 0 ? void 0 : callback(event, info);
     };
 }
-function useHoverGesture(_a) {
-    var onHoverStart = _a.onHoverStart, onHoverEnd = _a.onHoverEnd, whileHover = _a.whileHover, visualElement = _a.visualElement;
+function useHoverGesture({ onHoverStart, onHoverEnd, whileHover, visualElement, }) {
     usePointerEvent(visualElement, "pointerenter", onHoverStart || whileHover
         ? createHoverEvent(visualElement, true, onHoverStart)
         : undefined, { passive: !onHoverStart });

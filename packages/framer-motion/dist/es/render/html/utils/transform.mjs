@@ -2,21 +2,17 @@
  * A list of all transformable axes. We'll use this list to generated a version
  * of each axes for each transform.
  */
-var transformAxes = ["", "X", "Y", "Z"];
+const transformAxes = ["", "X", "Y", "Z"];
 /**
  * An ordered array of each transformable value. By default, transform values
  * will be sorted to this order.
  */
-var order = ["translate", "scale", "rotate", "skew"];
+const order = ["translate", "scale", "rotate", "skew"];
 /**
  * Generate a list of every possible transform key.
  */
-var transformProps = ["transformPerspective", "x", "y", "z"];
-order.forEach(function (operationKey) {
-    return transformAxes.forEach(function (axesKey) {
-        return transformProps.push(operationKey + axesKey);
-    });
-});
+const transformProps = ["transformPerspective", "x", "y", "z"];
+order.forEach((operationKey) => transformAxes.forEach((axesKey) => transformProps.push(operationKey + axesKey)));
 /**
  * A function to use with Array.sort to sort transform keys by their default order.
  */
@@ -26,14 +22,14 @@ function sortTransformProps(a, b) {
 /**
  * A quick lookup for transform props.
  */
-var transformPropSet = new Set(transformProps);
+const transformPropSet = new Set(transformProps);
 function isTransformProp(key) {
     return transformPropSet.has(key);
 }
 /**
  * A quick lookup for transform origin props
  */
-var transformOriginProps = new Set(["originX", "originY", "originZ"]);
+const transformOriginProps = new Set(["originX", "originY", "originZ"]);
 function isTransformOriginProp(key) {
     return transformOriginProps.has(key);
 }

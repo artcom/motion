@@ -7,13 +7,13 @@ import { buildSVGPath } from './path.mjs';
  * Build SVG visual attrbutes, like cx and style.transform
  */
 function buildSVGAttrs(state, _a, options, transformTemplate) {
-    var attrX = _a.attrX, attrY = _a.attrY, originX = _a.originX, originY = _a.originY, pathLength = _a.pathLength, _b = _a.pathSpacing, pathSpacing = _b === void 0 ? 1 : _b, _c = _a.pathOffset, pathOffset = _c === void 0 ? 0 : _c, 
+    var { attrX, attrY, originX, originY, pathLength, pathSpacing = 1, pathOffset = 0 } = _a, 
     // This is object creation, which we try to avoid per-frame.
     latest = __rest(_a, ["attrX", "attrY", "originX", "originY", "pathLength", "pathSpacing", "pathOffset"]);
     buildHTMLStyles(state, latest, options, transformTemplate);
     state.attrs = state.style;
     state.style = {};
-    var attrs = state.attrs, style = state.style, dimensions = state.dimensions;
+    const { attrs, style, dimensions } = state;
     /**
      * However, we apply transforms as CSS transforms. So if we detect a transform we take it from attrs
      * and copy it into style.

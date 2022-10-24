@@ -2,22 +2,21 @@ import { isRefObject } from '../../utils/is-ref-object.mjs';
 import { useContext } from 'react';
 import { SwitchLayoutGroupContext } from '../../context/SwitchLayoutGroupContext.mjs';
 
-function useProjection(projectionId, _a, visualElement, ProjectionNodeConstructor) {
-    var _b;
-    var layoutId = _a.layoutId, layout = _a.layout, drag = _a.drag, dragConstraints = _a.dragConstraints, layoutScroll = _a.layoutScroll;
-    var initialPromotionConfig = useContext(SwitchLayoutGroupContext);
+function useProjection(projectionId, { layoutId, layout, drag, dragConstraints, layoutScroll }, visualElement, ProjectionNodeConstructor) {
+    var _a;
+    const initialPromotionConfig = useContext(SwitchLayoutGroupContext);
     if (!ProjectionNodeConstructor ||
         !visualElement ||
         (visualElement === null || visualElement === void 0 ? void 0 : visualElement.projection)) {
         return;
     }
-    visualElement.projection = new ProjectionNodeConstructor(projectionId, visualElement.getLatestValues(), (_b = visualElement.parent) === null || _b === void 0 ? void 0 : _b.projection);
+    visualElement.projection = new ProjectionNodeConstructor(projectionId, visualElement.getLatestValues(), (_a = visualElement.parent) === null || _a === void 0 ? void 0 : _a.projection);
     visualElement.projection.setOptions({
-        layoutId: layoutId,
-        layout: layout,
+        layoutId,
+        layout,
         alwaysMeasureLayout: Boolean(drag) || (dragConstraints && isRefObject(dragConstraints)),
-        visualElement: visualElement,
-        scheduleRender: function () { return visualElement.scheduleRender(); },
+        visualElement,
+        scheduleRender: () => visualElement.scheduleRender(),
         /**
          * TODO: Update options in an effect. This could be tricky as it'll be too late
          * to update by the time layout animations run.
@@ -26,8 +25,8 @@ function useProjection(projectionId, _a, visualElement, ProjectionNodeConstructo
          *
          */
         animationType: typeof layout === "string" ? layout : "both",
-        initialPromotionConfig: initialPromotionConfig,
-        layoutScroll: layoutScroll,
+        initialPromotionConfig,
+        layoutScroll,
     });
 }
 

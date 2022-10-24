@@ -1,4 +1,3 @@
-import { __assign } from 'tslib';
 import * as React from 'react';
 import { forwardRef, useContext } from 'react';
 import { useFeatures } from './features/use-features.mjs';
@@ -23,21 +22,20 @@ import { VisualElementHandler } from './utils/VisualElementHandler.mjs';
  * Alongside this is a config option which provides a way of rendering the provided
  * component "offline", or outside the React render cycle.
  */
-function createMotionComponent(_a) {
-    var preloadedFeatures = _a.preloadedFeatures, createVisualElement = _a.createVisualElement, projectionNodeConstructor = _a.projectionNodeConstructor, useRender = _a.useRender, useVisualState = _a.useVisualState, Component = _a.Component;
+function createMotionComponent({ preloadedFeatures, createVisualElement, projectionNodeConstructor, useRender, useVisualState, Component, }) {
     preloadedFeatures && loadFeatures(preloadedFeatures);
     function MotionComponent(props, externalRef) {
-        var layoutId = useLayoutId(props);
-        props = __assign(__assign({}, props), { layoutId: layoutId });
+        const layoutId = useLayoutId(props);
+        props = Object.assign(Object.assign({}, props), { layoutId });
         /**
          * If we're rendering in a static environment, we only visually update the component
          * as a result of a React-rerender rather than interactions or animations. This
          * means we don't need to load additional memory structures like VisualElement,
          * or any gesture/animation features.
          */
-        var config = useContext(MotionConfigContext);
-        var features = null;
-        var context = useCreateMotionContext(props);
+        const config = useContext(MotionConfigContext);
+        let features = null;
+        const context = useCreateMotionContext(props);
         /**
          * Create a unique projection ID for this component. If a new component is added
          * during a layout animation we'll use this to query the DOM and hydrate its ref early, allowing
@@ -49,11 +47,11 @@ function createMotionComponent(_a) {
          * shared element transitions however. Perhaps for those we could revert to a root node
          * that gets forceRendered and layout animations are triggered on its layout effect.
          */
-        var projectionId = config.isStatic ? undefined : useProjectionId();
+        const projectionId = config.isStatic ? undefined : useProjectionId();
         /**
          *
          */
-        var visualState = useVisualState(props, config.isStatic);
+        const visualState = useVisualState(props, config.isStatic);
         if (!config.isStatic && isBrowser) {
             /**
              * Create a VisualElement for this component. A VisualElement provides a common
@@ -61,7 +59,7 @@ function createMotionComponent(_a) {
              * providing a way of rendering to these APIs outside of the React render loop
              * for more performant animations and interactions
              */
-            context.visualElement = useVisualElement(Component, visualState, __assign(__assign({}, config), props), createVisualElement);
+            context.visualElement = useVisualElement(Component, visualState, Object.assign(Object.assign({}, config), props), createVisualElement);
             useProjection(projectionId, props, context.visualElement, projectionNodeConstructor ||
                 featureDefinitions.projectionNodeConstructor);
             /**
@@ -74,16 +72,15 @@ function createMotionComponent(_a) {
          * The mount order and hierarchy is specific to ensure our element ref
          * is hydrated by the time features fire their effects.
          */
-        return (React.createElement(VisualElementHandler, { visualElement: context.visualElement, props: __assign(__assign({}, config), props) },
+        return (React.createElement(VisualElementHandler, { visualElement: context.visualElement, props: Object.assign(Object.assign({}, config), props) },
             features,
             React.createElement(MotionContext.Provider, { value: context }, useRender(Component, props, projectionId, useMotionRef(visualState, context.visualElement, externalRef), visualState, config.isStatic, context.visualElement))));
     }
     return forwardRef(MotionComponent);
 }
-function useLayoutId(_a) {
-    var _b;
-    var layoutId = _a.layoutId;
-    var layoutGroupId = (_b = useContext(LayoutGroupContext)) === null || _b === void 0 ? void 0 : _b.id;
+function useLayoutId({ layoutId }) {
+    var _a;
+    const layoutGroupId = (_a = useContext(LayoutGroupContext)) === null || _a === void 0 ? void 0 : _a.id;
     return layoutGroupId && layoutId !== undefined
         ? layoutGroupId + "-" + layoutId
         : layoutId;

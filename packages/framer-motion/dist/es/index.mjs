@@ -19,6 +19,7 @@ export { useScroll } from './value/use-scroll.mjs';
 export { useElementScroll } from './value/scroll/use-element-scroll.mjs';
 export { useViewportScroll } from './value/scroll/use-viewport-scroll.mjs';
 export { useTime } from './value/use-time.mjs';
+export { useWillChange } from './value/use-will-change/index.mjs';
 export { useReducedMotion, useReducedMotionConfig } from './utils/use-reduced-motion.mjs';
 export { animationControls } from './animation/animation-controls.mjs';
 export { useAnimation, useAnimationControls } from './animation/use-animation.mjs';

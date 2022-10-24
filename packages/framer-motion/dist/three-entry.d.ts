@@ -2201,7 +2201,6 @@ interface AnimationState {
     animateChanges: (options?: AnimationOptions, type?: AnimationType) => Promise<any>;
     setActive: (type: AnimationType, isActive: boolean, options?: AnimationOptions) => Promise<any>;
     setAnimateFunction: (fn: any) => void;
-    isAnimated(key: string): boolean;
     getState: () => {
         [key: string]: AnimationTypeState;
     };

@@ -6,11 +6,11 @@ import { LazyContext } from '../../context/LazyContext.mjs';
 import { useReducedMotionConfig } from '../../utils/use-reduced-motion.mjs';
 
 function useVisualElement(Component, visualState, props, createVisualElement) {
-    var lazyContext = useContext(LazyContext);
-    var parent = useVisualElementContext();
-    var presenceContext = useContext(PresenceContext);
-    var shouldReduceMotion = useReducedMotionConfig();
-    var visualElementRef = useRef(undefined);
+    const lazyContext = useContext(LazyContext);
+    const parent = useVisualElementContext();
+    const presenceContext = useContext(PresenceContext);
+    const shouldReduceMotion = useReducedMotionConfig();
+    const visualElementRef = useRef(undefined);
     /**
      * If we haven't preloaded a renderer, check to see if we have one lazy-loaded
      */
@@ -18,23 +18,23 @@ function useVisualElement(Component, visualState, props, createVisualElement) {
         createVisualElement = lazyContext.renderer;
     if (!visualElementRef.current && createVisualElement) {
         visualElementRef.current = createVisualElement(Component, {
-            visualState: visualState,
-            parent: parent,
-            props: props,
+            visualState,
+            parent,
+            props,
             presenceId: presenceContext === null || presenceContext === void 0 ? void 0 : presenceContext.id,
             blockInitialAnimation: (presenceContext === null || presenceContext === void 0 ? void 0 : presenceContext.initial) === false,
-            shouldReduceMotion: shouldReduceMotion,
+            shouldReduceMotion,
         });
     }
-    var visualElement = visualElementRef.current;
-    useIsomorphicLayoutEffect(function () {
+    const visualElement = visualElementRef.current;
+    useIsomorphicLayoutEffect(() => {
         visualElement === null || visualElement === void 0 ? void 0 : visualElement.syncRender();
     });
-    useEffect(function () {
+    useEffect(() => {
         var _a;
         (_a = visualElement === null || visualElement === void 0 ? void 0 : visualElement.animationState) === null || _a === void 0 ? void 0 : _a.animateChanges();
     });
-    useIsomorphicLayoutEffect(function () { return function () { return visualElement === null || visualElement === void 0 ? void 0 : visualElement.notifyUnmount(); }; }, []);
+    useIsomorphicLayoutEffect(() => () => visualElement === null || visualElement === void 0 ? void 0 : visualElement.notifyUnmount(), []);
     return visualElement;
 }
 

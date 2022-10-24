@@ -4,7 +4,7 @@
  * @privateRemarks
  * This doesn't throw if a `MotionProp` name is missing - it should.
  */
-var validMotionProps = new Set([
+const validMotionProps = new Set([
     "initial",
     "animate",
     "exit",

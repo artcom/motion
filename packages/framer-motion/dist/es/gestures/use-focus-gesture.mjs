@@ -7,13 +7,12 @@ import { useDomEvent } from '../events/use-dom-event.mjs';
  * @param ref
  * @internal
  */
-function useFocusGesture(_a) {
-    var whileFocus = _a.whileFocus, visualElement = _a.visualElement;
-    var onFocus = function () {
+function useFocusGesture({ whileFocus, visualElement }) {
+    const onFocus = () => {
         var _a;
         (_a = visualElement.animationState) === null || _a === void 0 ? void 0 : _a.setActive(AnimationType.Focus, true);
     };
-    var onBlur = function () {
+    const onBlur = () => {
         var _a;
         (_a = visualElement.animationState) === null || _a === void 0 ? void 0 : _a.setActive(AnimationType.Focus, false);
     };

@@ -14,22 +14,20 @@ function isVariantLabel(v) {
  * Creates an object containing the latest state of every MotionValue on a VisualElement
  */
 function getCurrent(visualElement) {
-    var current = {};
-    visualElement.forEachValue(function (value, key) { return (current[key] = value.get()); });
+    const current = {};
+    visualElement.forEachValue((value, key) => (current[key] = value.get()));
     return current;
 }
 /**
  * Creates an object containing the latest velocity of every MotionValue on a VisualElement
  */
 function getVelocity(visualElement) {
-    var velocity = {};
-    visualElement.forEachValue(function (value, key) { return (velocity[key] = value.getVelocity()); });
+    const velocity = {};
+    visualElement.forEachValue((value, key) => (velocity[key] = value.getVelocity()));
     return velocity;
 }
-function resolveVariantFromProps(props, definition, custom, currentValues, currentVelocity) {
+function resolveVariantFromProps(props, definition, custom, currentValues = {}, currentVelocity = {}) {
     var _a;
-    if (currentValues === void 0) { currentValues = {}; }
-    if (currentVelocity === void 0) { currentVelocity = {}; }
     /**
      * If the variant definition is a function, resolve.
      */
@@ -54,7 +52,7 @@ function resolveVariantFromProps(props, definition, custom, currentValues, curre
     return definition;
 }
 function resolveVariant(visualElement, definition, custom) {
-    var props = visualElement.getProps();
+    const props = visualElement.getProps();
     return resolveVariantFromProps(props, definition, custom !== null && custom !== void 0 ? custom : props.custom, getCurrent(visualElement), getVelocity(visualElement));
 }
 function checkIfControllingVariants(props) {

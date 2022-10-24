@@ -1,4 +1,4 @@
-import { __rest, __assign } from 'tslib';
+import { __rest } from 'tslib';
 import { visualElement } from '../index.mjs';
 import { getOrigin, checkTargetForNewValues } from '../utils/setters.mjs';
 import { buildHTMLStyles } from './utils/build-styles.mjs';
@@ -13,21 +13,22 @@ import { measureViewportBox } from '../../projection/utils/measure.mjs';
 function getComputedStyle(element) {
     return window.getComputedStyle(element);
 }
-var htmlConfig = {
+const htmlConfig = {
     treeType: "dom",
-    readValueFromInstance: function (domElement, key) {
+    readValueFromInstance(domElement, key) {
         if (isTransformProp(key)) {
-            var defaultType = getDefaultValueType(key);
+            const defaultType = getDefaultValueType(key);
             return defaultType ? defaultType.default || 0 : 0;
         }
         else {
-            var computedStyle = getComputedStyle(domElement);
-            return ((isCSSVariable(key)
+            const computedStyle = getComputedStyle(domElement);
+            const value = (isCSSVariable(key)
                 ? computedStyle.getPropertyValue(key)
-                : computedStyle[key]) || 0);
+                : computedStyle[key]) || 0;
+            return typeof value === "string" ? value.trim() : value;
         }
     },
-    sortNodePosition: function (a, b) {
+    sortNodePosition(a, b) {
         /**
          * compareDocumentPosition returns a bitmask, by using the bitwise &
          * we're returning true if 2 in that bitmask is set to true. 2 is set
@@ -35,12 +36,11 @@ var htmlConfig = {
          */
         return a.compareDocumentPosition(b) & 2 ? 1 : -1;
     },
-    getBaseTarget: function (props, key) {
+    getBaseTarget(props, key) {
         var _a;
         return (_a = props.style) === null || _a === void 0 ? void 0 : _a[key];
     },
-    measureViewportBox: function (element, _a) {
-        var transformPagePoint = _a.transformPagePoint;
+    measureViewportBox(element, { transformPagePoint }) {
         return measureViewportBox(element, transformPagePoint);
     },
     /**
@@ -50,19 +50,18 @@ var htmlConfig = {
      * layout transforms up the tree in the same way this.getBoundingBoxWithoutTransforms
      * works
      */
-    resetTransform: function (element, domElement, props) {
-        var transformTemplate = props.transformTemplate;
+    resetTransform(element, domElement, props) {
+        const { transformTemplate } = props;
         domElement.style.transform = transformTemplate
             ? transformTemplate({}, "")
             : "none";
         // Ensure that whatever happens next, we restore our transform on the next frame
         element.scheduleRender();
     },
-    restoreTransform: function (instance, mutableState) {
+    restoreTransform(instance, mutableState) {
         instance.style.transform = mutableState.style.transform;
     },
-    removeValueFromRenderState: function (key, _a) {
-        var vars = _a.vars, style = _a.style;
+    removeValueFromRenderState(key, { vars, style }) {
         delete vars[key];
         delete style[key];
     },
@@ -70,11 +69,11 @@ var htmlConfig = {
      * Ensure that HTML and Framer-specific value types like `px`->`%` and `Color`
      * can be animated by Motion.
      */
-    makeTargetAnimatable: function (element, _a, _b, isMounted) {
-        var transition = _a.transition, transitionEnd = _a.transitionEnd, target = __rest(_a, ["transition", "transitionEnd"]);
+    makeTargetAnimatable(element, _a, _b, isMounted) {
+        var { transition, transitionEnd } = _a, target = __rest(_a, ["transition", "transitionEnd"]);
         var transformValues = _b.transformValues;
         if (isMounted === void 0) { isMounted = true; }
-        var origin = getOrigin(target, transition || {}, element);
+        let origin = getOrigin(target, transition || {}, element);
         /**
          * If Framer has provided a function to convert `Color` etc value types, convert them
          */
@@ -88,14 +87,15 @@ var htmlConfig = {
         }
         if (isMounted) {
             checkTargetForNewValues(element, target, origin);
-            var parsed = parseDomVariant(element, target, origin, transitionEnd);
+            const parsed = parseDomVariant(element, target, origin, transitionEnd);
             transitionEnd = parsed.transitionEnd;
             target = parsed.target;
         }
-        return __assign({ transition: transition, transitionEnd: transitionEnd }, target);
+        return Object.assign({ transition,
+            transitionEnd }, target);
     },
-    scrapeMotionValuesFromProps: scrapeMotionValuesFromProps,
-    build: function (element, renderState, latestValues, options, props) {
+    scrapeMotionValuesFromProps,
+    build(element, renderState, latestValues, options, props) {
         if (element.isVisible !== undefined) {
             renderState.style.visibility = element.isVisible
                 ? "visible"
@@ -105,6 +105,6 @@ var htmlConfig = {
     },
     render: renderHTML,
 };
-var htmlVisualElement = visualElement(htmlConfig);
+const htmlVisualElement = visualElement(htmlConfig);
 
 export { getComputedStyle, htmlConfig, htmlVisualElement };

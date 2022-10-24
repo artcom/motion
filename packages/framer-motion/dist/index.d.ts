@@ -2263,7 +2263,6 @@ interface AnimationState {
     animateChanges: (options?: AnimationOptions$1, type?: AnimationType) => Promise<any>;
     setActive: (type: AnimationType, isActive: boolean, options?: AnimationOptions$1) => Promise<any>;
     setAnimateFunction: (fn: any) => void;
-    isAnimated(key: string): boolean;
     getState: () => {
         [key: string]: AnimationTypeState;
     };
@@ -2796,7 +2795,7 @@ declare type DOMMotionComponents = HTMLMotionComponents & SVGMotionComponents;
  *
  * @public
  */
-declare const motion: (<Props>(Component: string | React$1.ComponentType<React$1.PropsWithChildren<Props>>, customMotionComponentConfig?: CustomMotionComponentConfig) => CustomDomComponent<Props>) & HTMLMotionComponents & SVGMotionComponents;
+declare const motion: (<Props extends {}>(Component: string | React$1.ComponentType<React$1.PropsWithChildren<Props>>, customMotionComponentConfig?: CustomMotionComponentConfig) => CustomDomComponent<Props>) & HTMLMotionComponents & SVGMotionComponents;
 /**
  * Create a DOM `motion` component with the provided string. This is primarily intended
  * as a full alternative to `motion` for consumers who have to support environments that don't
@@ -2817,7 +2816,7 @@ declare function createDomMotionComponent<T extends keyof DOMMotionComponents>(k
 /**
  * @public
  */
-declare const m: (<Props>(Component: string | React$1.ComponentType<React$1.PropsWithChildren<Props>>, customMotionComponentConfig?: CustomMotionComponentConfig) => CustomDomComponent<Props>) & HTMLMotionComponents & SVGMotionComponents;
+declare const m: (<Props extends {}>(Component: string | React$1.ComponentType<React$1.PropsWithChildren<Props>>, customMotionComponentConfig?: CustomMotionComponentConfig) => CustomDomComponent<Props>) & HTMLMotionComponents & SVGMotionComponents;
 
 /**
  * @public
@@ -2869,9 +2868,23 @@ interface AnimatePresenceProps {
      * )
      * ```
      *
-     * @beta
+     * @deprecated
+     *
+     * Replace with `mode="wait"`
      */
     exitBeforeEnter?: boolean;
+    /**
+     * Determines how to handle entering and exiting elements.
+     *
+     * - `"sync"`: Default. Elements animate in and out as soon as they're added/removed.
+     * - `"popLayout"`: Exiting elements are "popped" from the page layout, allowing sibling
+     *      elements to immediately occupy their new layouts.
+     * - `"wait"`: Only renders one component at a time. Wait for the exiting component to animate out
+     *      before animating the next component in.
+     *
+     * @public
+     */
+    mode?: "sync" | "popLayout" | "wait";
     /**
      * Internal. Used in Framer to flag that sibling children *shouldn't* re-render as a result of a
      * child being removed.
@@ -2880,38 +2893,38 @@ interface AnimatePresenceProps {
 }
 
 /**
- * `AnimatePresence` enables the animation of components that have been removed from the tree.
- *
- * When adding/removing more than a single child, every child **must** be given a unique `key` prop.
- *
- * Any `motion` components that have an `exit` property defined will animate out when removed from
- * the tree.
- *
- * ```jsx
- * import { motion, AnimatePresence } from 'framer-motion'
- *
- * export const Items = ({ items }) => (
- *   <AnimatePresence>
- *     {items.map(item => (
- *       <motion.div
- *         key={item.id}
- *         initial={{ opacity: 0 }}
- *         animate={{ opacity: 1 }}
- *         exit={{ opacity: 0 }}
- *       />
- *     ))}
- *   </AnimatePresence>
- * )
- * ```
- *
- * You can sequence exit animations throughout a tree using variants.
- *
- * If a child contains multiple `motion` components with `exit` props, it will only unmount the child
- * once all `motion` components have finished animating out. Likewise, any components using
- * `usePresence` all need to call `safeToRemove`.
- *
- * @public
- */
+* `AnimatePresence` enables the animation of components that have been removed from the tree.
+*
+* When adding/removing more than a single child, every child **must** be given a unique `key` prop.
+*
+* Any `motion` components that have an `exit` property defined will animate out when removed from
+* the tree.
+*
+* ```jsx
+* import { motion, AnimatePresence } from 'framer-motion'
+*
+* export const Items = ({ items }) => (
+*   <AnimatePresence>
+*     {items.map(item => (
+*       <motion.div
+*         key={item.id}
+*         initial={{ opacity: 0 }}
+*         animate={{ opacity: 1 }}
+*         exit={{ opacity: 0 }}
+*       />
+*     ))}
+*   </AnimatePresence>
+* )
+* ```
+*
+* You can sequence exit animations throughout a tree using variants.
+*
+* If a child contains multiple `motion` components with `exit` props, it will only unmount the child
+* once all `motion` components have finished animating out. Likewise, any components using
+* `usePresence` all need to call `safeToRemove`.
+*
+* @public
+*/
 declare const AnimatePresence: React$1.FunctionComponent<React$1.PropsWithChildren<AnimatePresenceProps>>;
 
 declare const AnimateSharedLayout: React$1.FunctionComponent<React$1.PropsWithChildren<unknown>>;
@@ -3937,6 +3950,14 @@ declare function useViewportScroll(): {
 
 declare function useTime(): MotionValue<number>;
 
+interface WillChange extends MotionValue {
+    add(name: string): void;
+    remove(name: string): void;
+    get(): void;
+}
+
+declare function useWillChange(): WillChange;
+
 /**
  * A hook that returns `true` if we should be using reduced motion based on the current device's Reduced Motion setting.
  *
@@ -4220,4 +4241,4 @@ interface ScaleMotionValues {
  */
 declare function useInvertedScale(scale?: Partial<ScaleMotionValues>): ScaleMotionValues;
 
-export { AnimatePresence, AnimatePresenceProps, AnimateSharedLayout, AnimationControls, AnimationLifecycles, AnimationOptions, AnimationPlaybackControls, AnimationProps, AnimationType, Axis, AxisDelta, BoundingBox, Box, CreateVisualElement, CustomDomComponent, CustomValueType, Delta, DeprecatedLayoutGroupContext, DragControls, DragElastic, DragHandlers, DraggableProps, EasingFunction, EventInfo, FeatureBundle, FeatureComponent, FeatureComponents, FeatureDefinition, FeatureDefinitions, FeatureNames, FeatureProps, FlatTree, FocusHandlers, ForwardRefComponent, HTMLMotionProps, HoverHandlers, IProjectionNode, Inertia, Keyframes, KeyframesTarget, LayoutGroup, LayoutGroupContext, LayoutProps, LazyFeatureBundle$1 as LazyFeatureBundle, LazyMotion, LazyProps, LoadedFeatures, MotionAdvancedProps, MotionConfig, MotionConfigContext, MotionConfigProps, MotionContext, MotionProps, MotionStyle, MotionTransform, MotionValue, None, Orchestration, PanHandlers, PanInfo, PassiveEffect, Point, PresenceContext, RelayoutInfo, RenderComponent, Reorder, Repeat, ResolveLayoutTransition, ResolvedKeyframesTarget, ResolvedSingleTarget, ResolvedValueTarget, ResolvedValues, SVGAttributesAsMotionValues, SVGMotionProps, ScrapeMotionValuesFromProps, ScrollMotionValues, SingleTarget, Spring, Subscriber, SwitchLayoutGroupContext, TapHandlers, TapInfo, Target, TargetAndTransition, TransformPoint, Transition, Tween, ValueTarget, Variant, VariantLabels, Variants, VisualElement, VisualElementLifecycles, VisualState, addPointerEvent, addScaleCorrector, animate, animateVisualElement, animationControls, animations, calcLength, checkTargetForNewValues, createBox, createDomMotionComponent, createMotionComponent, domAnimation, domMax, filterProps, isBrowser, isDragActive, isMotionValue, isValidMotionProp, m, makeUseVisualState, motion, motionValue, resolveMotionValue, transform, useAnimation, useAnimationControls, useAnimationFrame, useCycle, useAnimatedState as useDeprecatedAnimatedState, useInvertedScale as useDeprecatedInvertedScale, useDomEvent, useDragControls, useElementScroll, useForceUpdate, useInView, useInstantLayoutTransition, useInstantTransition, useIsPresent, useIsomorphicLayoutEffect, useMotionTemplate, useMotionValue, usePresence, useReducedMotion, useReducedMotionConfig, useResetProjection, useScroll, useSpring, useTime, useTransform, useUnmountEffect, useVelocity, useViewportScroll, useVisualElementContext, visualElement, wrapHandler };
+export { AnimatePresence, AnimatePresenceProps, AnimateSharedLayout, AnimationControls, AnimationLifecycles, AnimationOptions, AnimationPlaybackControls, AnimationProps, AnimationType, Axis, AxisDelta, BoundingBox, Box, CreateVisualElement, CustomDomComponent, CustomValueType, Delta, DeprecatedLayoutGroupContext, DragControls, DragElastic, DragHandlers, DraggableProps, EasingFunction, EventInfo, FeatureBundle, FeatureComponent, FeatureComponents, FeatureDefinition, FeatureDefinitions, FeatureNames, FeatureProps, FlatTree, FocusHandlers, ForwardRefComponent, HTMLMotionProps, HoverHandlers, IProjectionNode, Inertia, Keyframes, KeyframesTarget, LayoutGroup, LayoutGroupContext, LayoutProps, LazyFeatureBundle$1 as LazyFeatureBundle, LazyMotion, LazyProps, LoadedFeatures, MotionAdvancedProps, MotionConfig, MotionConfigContext, MotionConfigProps, MotionContext, MotionProps, MotionStyle, MotionTransform, MotionValue, None, Orchestration, PanHandlers, PanInfo, PassiveEffect, Point, PresenceContext, RelayoutInfo, RenderComponent, Reorder, Repeat, ResolveLayoutTransition, ResolvedKeyframesTarget, ResolvedSingleTarget, ResolvedValueTarget, ResolvedValues, SVGAttributesAsMotionValues, SVGMotionProps, ScrapeMotionValuesFromProps, ScrollMotionValues, SingleTarget, Spring, Subscriber, SwitchLayoutGroupContext, TapHandlers, TapInfo, Target, TargetAndTransition, TransformPoint, Transition, Tween, ValueTarget, Variant, VariantLabels, Variants, VisualElement, VisualElementLifecycles, VisualState, addPointerEvent, addScaleCorrector, animate, animateVisualElement, animationControls, animations, calcLength, checkTargetForNewValues, createBox, createDomMotionComponent, createMotionComponent, domAnimation, domMax, filterProps, isBrowser, isDragActive, isMotionValue, isValidMotionProp, m, makeUseVisualState, motion, motionValue, resolveMotionValue, transform, useAnimation, useAnimationControls, useAnimationFrame, useCycle, useAnimatedState as useDeprecatedAnimatedState, useInvertedScale as useDeprecatedInvertedScale, useDomEvent, useDragControls, useElementScroll, useForceUpdate, useInView, useInstantLayoutTransition, useInstantTransition, useIsPresent, useIsomorphicLayoutEffect, useMotionTemplate, useMotionValue, usePresence, useReducedMotion, useReducedMotionConfig, useResetProjection, useScroll, useSpring, useTime, useTransform, useUnmountEffect, useVelocity, useViewportScroll, useVisualElementContext, useWillChange, visualElement, wrapHandler };

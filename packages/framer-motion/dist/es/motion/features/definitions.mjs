@@ -1,7 +1,7 @@
-var createDefinition = function (propNames) { return ({
-    isEnabled: function (props) { return propNames.some(function (name) { return !!props[name]; }); },
-}); };
-var featureDefinitions = {
+const createDefinition = (propNames) => ({
+    isEnabled: (props) => propNames.some((name) => !!props[name]),
+});
+const featureDefinitions = {
     measureLayout: createDefinition(["layout", "layoutId", "drag"]),
     animation: createDefinition([
         "animate",
@@ -31,7 +31,7 @@ var featureDefinitions = {
     ]),
 };
 function loadFeatures(features) {
-    for (var key in features) {
+    for (const key in features) {
         if (features[key] === null)
             continue;
         if (key === "projectionNodeConstructor") {

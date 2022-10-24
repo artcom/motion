@@ -10,15 +10,14 @@ import { isDragActive } from './drag/utils/lock.mjs';
  * @param handlers -
  * @internal
  */
-function useTapGesture(_a) {
-    var onTap = _a.onTap, onTapStart = _a.onTapStart, onTapCancel = _a.onTapCancel, whileTap = _a.whileTap, visualElement = _a.visualElement;
-    var hasPressListeners = onTap || onTapStart || onTapCancel || whileTap;
-    var isPressing = useRef(false);
-    var cancelPointerEndListeners = useRef(null);
+function useTapGesture({ onTap, onTapStart, onTapCancel, whileTap, visualElement, }) {
+    const hasPressListeners = onTap || onTapStart || onTapCancel || whileTap;
+    const isPressing = useRef(false);
+    const cancelPointerEndListeners = useRef(null);
     /**
      * Only set listener to passive if there are no external listeners.
      */
-    var eventOptions = {
+    const eventOptions = {
         passive: !(onTapStart || onTap || onTapCancel || onPointerDown),
     };
     function removePointerEndListener() {

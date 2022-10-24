@@ -1,4 +1,4 @@
-import { __assign, __rest, __spreadArray, __read } from 'tslib';
+import { __rest } from 'tslib';
 import { inertia, animate } from 'popmotion';
 import { secondsToMilliseconds } from '../../utils/time-conversion.mjs';
 import { isEasingArray, easingDefinitionToFunction } from './easing.mjs';
@@ -15,16 +15,16 @@ import { resolveFinalValueInKeyframes } from '../../utils/resolve-value.mjs';
  * if any options are left.
  */
 function isTransitionDefined(_a) {
-    _a.when; _a.delay; _a.delayChildren; _a.staggerChildren; _a.staggerDirection; _a.repeat; _a.repeatType; _a.repeatDelay; _a.from; var transition = __rest(_a, ["when", "delay", "delayChildren", "staggerChildren", "staggerDirection", "repeat", "repeatType", "repeatDelay", "from"]);
+    var transition = __rest(_a, ["when", "delay", "delayChildren", "staggerChildren", "staggerDirection", "repeat", "repeatType", "repeatDelay", "from"]);
     return !!Object.keys(transition).length;
 }
-var legacyRepeatWarning = false;
+let legacyRepeatWarning = false;
 /**
  * Convert Framer Motion's Transition type into Popmotion-compatible options.
  */
 function convertTransitionToAnimationOptions(_a) {
-    var ease = _a.ease, times = _a.times, yoyo = _a.yoyo, flip = _a.flip, loop = _a.loop, transition = __rest(_a, ["ease", "times", "yoyo", "flip", "loop"]);
-    var options = __assign({}, transition);
+    var { ease, times, yoyo, flip, loop } = _a, transition = __rest(_a, ["ease", "times", "yoyo", "flip", "loop"]);
+    const options = Object.assign({}, transition);
     if (times)
         options["offset"] = times;
     /**
@@ -78,12 +78,12 @@ function convertTransitionToAnimationOptions(_a) {
  */
 function getDelayFromTransition(transition, key) {
     var _a, _b;
-    var valueTransition = getValueTransition(transition, key) || {};
+    const valueTransition = getValueTransition(transition, key) || {};
     return (_b = (_a = valueTransition.delay) !== null && _a !== void 0 ? _a : transition.delay) !== null && _b !== void 0 ? _b : 0;
 }
 function hydrateKeyframes(options) {
     if (Array.isArray(options.to) && options.to[0] === null) {
-        options.to = __spreadArray([], __read(options.to), false);
+        options.to = [...options.to];
         options.to[0] = options.from;
     }
     return options;
@@ -98,18 +98,18 @@ function getPopmotionAnimationOptions(transition, options, key) {
      * Get a default transition if none is determined to be defined.
      */
     if (!isTransitionDefined(transition)) {
-        transition = __assign(__assign({}, transition), getDefaultTransition(key, options.to));
+        transition = Object.assign(Object.assign({}, transition), getDefaultTransition(key, options.to));
     }
-    return __assign(__assign({}, options), convertTransitionToAnimationOptions(transition));
+    return Object.assign(Object.assign({}, options), convertTransitionToAnimationOptions(transition));
 }
 /**
  *
  */
 function getAnimation(key, value, target, transition, onComplete) {
     var _a;
-    var valueTransition = getValueTransition(transition, key);
-    var origin = (_a = valueTransition.from) !== null && _a !== void 0 ? _a : value.get();
-    var isTargetAnimatable = isAnimatable(key, target);
+    const valueTransition = getValueTransition(transition, key);
+    let origin = (_a = valueTransition.from) !== null && _a !== void 0 ? _a : value.get();
+    const isTargetAnimatable = isAnimatable(key, target);
     if (origin === "none" && isTargetAnimatable && typeof target === "string") {
         /**
          * If we're trying to animate from "none", try and get an animatable version
@@ -125,24 +125,24 @@ function getAnimation(key, value, target, transition, onComplete) {
         typeof origin === "string") {
         target = getZeroUnit(origin);
     }
-    var isOriginAnimatable = isAnimatable(key, origin);
-    warning(isOriginAnimatable === isTargetAnimatable, "You are trying to animate ".concat(key, " from \"").concat(origin, "\" to \"").concat(target, "\". ").concat(origin, " is not an animatable value - to enable this animation set ").concat(origin, " to a value animatable to ").concat(target, " via the `style` property."));
+    const isOriginAnimatable = isAnimatable(key, origin);
+    warning(isOriginAnimatable === isTargetAnimatable, `You are trying to animate ${key} from "${origin}" to "${target}". ${origin} is not an animatable value - to enable this animation set ${origin} to a value animatable to ${target} via the \`style\` property.`);
     function start() {
-        var options = {
+        const options = {
             from: origin,
             to: target,
             velocity: value.getVelocity(),
-            onComplete: onComplete,
-            onUpdate: function (v) { return value.set(v); },
+            onComplete,
+            onUpdate: (v) => value.set(v),
         };
         return valueTransition.type === "inertia" ||
             valueTransition.type === "decay"
-            ? inertia(__assign(__assign({}, options), valueTransition))
-            : animate(__assign(__assign({}, getPopmotionAnimationOptions(valueTransition, options, key)), { onUpdate: function (v) {
+            ? inertia(Object.assign(Object.assign({}, options), valueTransition))
+            : animate(Object.assign(Object.assign({}, getPopmotionAnimationOptions(valueTransition, options, key)), { onUpdate: (v) => {
                     var _a;
                     options.onUpdate(v);
                     (_a = valueTransition.onUpdate) === null || _a === void 0 ? void 0 : _a.call(valueTransition, v);
-                }, onComplete: function () {
+                }, onComplete: () => {
                     var _a;
                     options.onComplete();
                     (_a = valueTransition.onComplete) === null || _a === void 0 ? void 0 : _a.call(valueTransition);
@@ -150,12 +150,12 @@ function getAnimation(key, value, target, transition, onComplete) {
     }
     function set() {
         var _a, _b;
-        var finalTarget = resolveFinalValueInKeyframes(target);
+        const finalTarget = resolveFinalValueInKeyframes(target);
         value.set(finalTarget);
         onComplete();
         (_a = valueTransition === null || valueTransition === void 0 ? void 0 : valueTransition.onUpdate) === null || _a === void 0 ? void 0 : _a.call(valueTransition, finalTarget);
         (_b = valueTransition === null || valueTransition === void 0 ? void 0 : valueTransition.onComplete) === null || _b === void 0 ? void 0 : _b.call(valueTransition);
-        return { stop: function () { } };
+        return { stop: () => { } };
     }
     return !isOriginAnimatable ||
         !isTargetAnimatable ||
@@ -181,24 +181,23 @@ function getValueTransition(transition, key) {
  * Start animation on a MotionValue. This function is an interface between
  * Framer Motion and Popmotion
  */
-function startAnimation(key, value, target, transition) {
-    if (transition === void 0) { transition = {}; }
+function startAnimation(key, value, target, transition = {}) {
     if (instantAnimationState.current) {
         transition = { type: false };
     }
-    return value.start(function (onComplete) {
-        var delayTimer;
-        var controls;
-        var animation = getAnimation(key, value, target, transition, onComplete);
-        var delay = getDelayFromTransition(transition, key);
-        var start = function () { return (controls = animation()); };
+    return value.start((onComplete) => {
+        let delayTimer;
+        let controls;
+        const animation = getAnimation(key, value, target, transition, onComplete);
+        const delay = getDelayFromTransition(transition, key);
+        const start = () => (controls = animation());
         if (delay) {
             delayTimer = window.setTimeout(start, secondsToMilliseconds(delay));
         }
         else {
             start();
         }
-        return function () {
+        return () => {
             clearTimeout(delayTimer);
             controls === null || controls === void 0 ? void 0 : controls.stop();
         };

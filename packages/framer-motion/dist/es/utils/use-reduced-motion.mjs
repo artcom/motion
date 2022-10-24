@@ -1,21 +1,18 @@
-import { __read } from 'tslib';
 import { useState, useContext } from 'react';
 import { MotionConfigContext } from '../context/MotionConfigContext.mjs';
 import { isBrowser } from './is-browser.mjs';
 
 // Does this device prefer reduced motion? Returns `null` server-side.
-var prefersReducedMotion = { current: null };
-var hasDetected = false;
+const prefersReducedMotion = { current: null };
+let hasDetected = false;
 function initPrefersReducedMotion() {
     hasDetected = true;
     if (!isBrowser)
         return;
     if (window.matchMedia) {
-        var motionMediaQuery_1 = window.matchMedia("(prefers-reduced-motion)");
-        var setReducedMotionPreferences = function () {
-            return (prefersReducedMotion.current = motionMediaQuery_1.matches);
-        };
-        motionMediaQuery_1.addListener(setReducedMotionPreferences);
+        const motionMediaQuery = window.matchMedia("(prefers-reduced-motion)");
+        const setReducedMotionPreferences = () => (prefersReducedMotion.current = motionMediaQuery.matches);
+        motionMediaQuery.addListener(setReducedMotionPreferences);
         setReducedMotionPreferences();
     }
     else {
@@ -53,15 +50,15 @@ function useReducedMotion() {
      * Lazy initialisation of prefersReducedMotion
      */
     !hasDetected && initPrefersReducedMotion();
-    var _a = __read(useState(prefersReducedMotion.current), 1), shouldReduceMotion = _a[0];
+    const [shouldReduceMotion] = useState(prefersReducedMotion.current);
     /**
      * TODO See if people miss automatically updating shouldReduceMotion setting
      */
     return shouldReduceMotion;
 }
 function useReducedMotionConfig() {
-    var reducedMotionPreference = useReducedMotion();
-    var reducedMotion = useContext(MotionConfigContext).reducedMotion;
+    const reducedMotionPreference = useReducedMotion();
+    const { reducedMotion } = useContext(MotionConfigContext);
     if (reducedMotion === "never") {
         return false;
     }

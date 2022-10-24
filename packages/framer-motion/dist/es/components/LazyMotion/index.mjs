@@ -1,4 +1,4 @@
-import { __read, __rest } from 'tslib';
+import { __rest } from 'tslib';
 import * as React from 'react';
 import { useState, useRef, useEffect } from 'react';
 import { LazyContext } from '../../context/LazyContext.mjs';
@@ -39,29 +39,28 @@ import { loadFeatures } from '../../motion/features/definitions.mjs';
  *
  * @public
  */
-function LazyMotion(_a) {
-    var children = _a.children, features = _a.features, _b = _a.strict, strict = _b === void 0 ? false : _b;
-    var _c = __read(useState(!isLazyBundle(features)), 2), setIsLoaded = _c[1];
-    var loadedRenderer = useRef(undefined);
+function LazyMotion({ children, features, strict = false }) {
+    const [, setIsLoaded] = useState(!isLazyBundle(features));
+    const loadedRenderer = useRef(undefined);
     /**
      * If this is a synchronous load, load features immediately
      */
     if (!isLazyBundle(features)) {
-        var renderer = features.renderer, loadedFeatures = __rest(features, ["renderer"]);
+        const { renderer } = features, loadedFeatures = __rest(features, ["renderer"]);
         loadedRenderer.current = renderer;
         loadFeatures(loadedFeatures);
     }
-    useEffect(function () {
+    useEffect(() => {
         if (isLazyBundle(features)) {
-            features().then(function (_a) {
-                var renderer = _a.renderer, loadedFeatures = __rest(_a, ["renderer"]);
+            features().then((_a) => {
+                var { renderer } = _a, loadedFeatures = __rest(_a, ["renderer"]);
                 loadFeatures(loadedFeatures);
                 loadedRenderer.current = renderer;
                 setIsLoaded(true);
             });
         }
     }, []);
-    return (React.createElement(LazyContext.Provider, { value: { renderer: loadedRenderer.current, strict: strict } }, children));
+    return (React.createElement(LazyContext.Provider, { value: { renderer: loadedRenderer.current, strict } }, children));
 }
 function isLazyBundle(features) {
     return typeof features === "function";
