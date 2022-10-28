@@ -109,20 +109,22 @@ describe("AnimatePresence", () => {
     })
 
     test("Unmount of rapidly changing children", async () => {
-        const startCount = 3
-        const endCount = 2
+        const startCount = 10
+        const endCount = 5
         const promise = new Promise< { start: number; end: number }>((resolve) => {
+            
+            const opacitys = [...Array(startCount)].map(() => motionValue(1))
+            const Component = ({ numberOfChildren }: { numberOfChildren: Number }) => {
 
-
-        const Component = ({ numberOfChildren }: { numberOfChildren: Number }) => {
             return (
                 <AnimatePresence>
-                    { [...Array(numberOfChildren)].map((_, index) => { 
+                    {[...Array(numberOfChildren)].map((_, index) => { 
                         return (                               
                             <motion.div
-                            key={index}
-                            animate={{ x: 100 }}
-                            exit={{ x: 0 }}
+                                key={index}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.1 }}
+                                style={{ opacity: opacitys[index] }}
                             />
                             ) 
                     }) }
@@ -135,7 +137,16 @@ describe("AnimatePresence", () => {
 
          act( () => {
             rerender(<Component numberOfChildren={ 1 } />) 
-        })
+         })
+         
+         // Check all exiting children are animating out
+        setTimeout(() => {
+            for (let i = startCount; i < endCount; i++) {                        
+                    expect(opacitys[i].get()).not.toBe(1)
+                    expect(opacitys[i].get()).not.toBe(0)
+            }                
+         }, 50)
+            
          act( () => {
             rerender(<Component numberOfChildren={ endCount } />)
         }) 
