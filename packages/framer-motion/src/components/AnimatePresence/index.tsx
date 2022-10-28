@@ -179,10 +179,16 @@ export const AnimatePresence: React.FunctionComponent<
     // with any `exit` prop they might have defined.
     exiting.forEach((key) => {
         // If this component is actually entering again, early return
-        if (targetKeys.indexOf(key) !== -1) return
+        if (targetKeys.indexOf(key) !== -1) {
+            exiting.delete(key)
+            return
+         }
 
         const child = allChildren.get(key)
-        if (!child) return
+        if (!child) {
+            exiting.delete(key)
+            return
+         }
 
         const insertionIndex = presentKeys.indexOf(key)
 
