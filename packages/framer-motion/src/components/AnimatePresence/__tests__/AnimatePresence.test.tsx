@@ -108,6 +108,52 @@ describe("AnimatePresence", () => {
         expect(container.firstChild).toBeFalsy()
     })
 
+    test("Unmount of rapidly changing children", async () => {
+        const startCount = 3
+        const endCount = 2
+        const promise = new Promise< { start: number; end: number }>((resolve) => {
+
+
+        const Component = ({ numberOfChildren }: { numberOfChildren: Number }) => {
+            return (
+                <AnimatePresence>
+                    { [...Array(numberOfChildren)].map((_, index) => { 
+                        return (                               
+                            <motion.div
+                            key={index}
+                            animate={{ x: 100 }}
+                            exit={{ x: 0 }}
+                            />
+                            ) 
+                    }) }
+                </AnimatePresence>
+            )
+        }
+
+        const { container, rerender } = render(<Component  numberOfChildren={ startCount} />)
+        const start = container.childElementCount   
+
+         act( () => {
+            rerender(<Component numberOfChildren={ 1 } />) 
+        })
+         act( () => {
+            rerender(<Component numberOfChildren={ endCount } />)
+        }) 
+                
+        
+        setTimeout(() => {
+            const end = container.childElementCount
+            resolve({start,  end})
+        }, 300)
+            
+        })
+
+        const childElementCount = await promise
+        expect(childElementCount.start).toBe(startCount)
+        expect(childElementCount.end).toBe(endCount)
+        
+    })
+
     test("Allows nested exit animations", async () => {
         const promise = new Promise((resolve) => {
             const opacity = motionValue(0)
