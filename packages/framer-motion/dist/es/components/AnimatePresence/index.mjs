@@ -119,11 +119,15 @@ const AnimatePresence = ({ children, custom, initial = true, onExitComplete, exi
     // with any `exit` prop they might have defined.
     exiting.forEach((key) => {
         // If this component is actually entering again, early return
-        if (targetKeys.indexOf(key) !== -1)
+        if (targetKeys.indexOf(key) !== -1) {
+            exiting.delete(key);
             return;
+        }
         const child = allChildren.get(key);
-        if (!child)
+        if (!child) {
+            exiting.delete(key);
             return;
+        }
         const insertionIndex = presentKeys.indexOf(key);
         const onExit = () => {
             allChildren.delete(key);
